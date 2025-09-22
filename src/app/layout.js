@@ -1,4 +1,5 @@
 import "./globals.css";
+import HeaderNav from "./components/HeaderNav";
 
 export const metadata = {
   title: "Prompt Manager",
@@ -8,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <HeaderNav />
+        <main style={{ paddingTop: "1rem" }}>{children}</main>
+      </body>
     </html>
   );
 }
