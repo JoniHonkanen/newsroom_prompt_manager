@@ -8,6 +8,8 @@ export default function Home() {
   const [compositions, setCompositions] = useState([]);
   const [activeComposition, setActiveComposition] = useState("");
   const [loading, setLoading] = useState(false);
+  const [activePrompt, setActivePrompt] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     loadCompositions();
@@ -22,7 +24,6 @@ export default function Home() {
       console.log("Loaded compositions:", data);
 
       if (data.length === 0 || data.detail === "Not Found") {
-        console.log("TÄNNE MENI!");
         setActiveComposition([]);
         setCompositions([]);
 
@@ -32,6 +33,36 @@ export default function Home() {
       const active = data.find((c) => c.is_active);
       if (active) {
         setActiveComposition(active.name);
+        // Build the full prompt from persona + fragments
+        try {
+          const [personasRes, fragmentsRes] = await Promise.all([
+            fetch("http://localhost:8000/api/ethical-personas"),
+            fetch("http://localhost:8000/api/prompt-fragments"),
+          ]);
+          const [personas, fragments] = await Promise.all([
+            personasRes.json(),
+            fragmentsRes.json(),
+          ]);
+
+          const persona = personas.find(
+            (p) => p.id === active.ethical_persona_id
+          );
+          const selectedFragments = (active.fragment_ids || [])
+            .map((id) => fragments.find((f) => f.id === id))
+            .filter(Boolean);
+
+          const parts = [];
+          if (persona?.content) parts.push(persona.content);
+          if (selectedFragments.length > 0)
+            parts.push(...selectedFragments.map((f) => f.content));
+
+          setActivePrompt(parts.join("\n\n"));
+        } catch (e) {
+          console.error("Failed building active prompt:", e);
+          setActivePrompt("");
+        }
+      } else {
+        setActivePrompt("");
       }
     } catch (error) {
       console.error("Error loading compositions:", error);
@@ -72,7 +103,38 @@ export default function Home() {
         <h2>Currently Active</h2>
         <div className={styles.activeCard}>
           {activeComposition ? (
-            <span className={styles.activeName}>🟢 {activeComposition}</span>
+            <div>
+              <div className={styles.activeTopRow}>
+                <div className={styles.activeName}>🟢 {activeComposition}</div>
+                <button
+                  className={styles.toggleButton}
+                  onClick={() => setShowPreview((v) => !v)}
+                  disabled={!activePrompt}
+                >
+                  {showPreview ? "Hide prompt" : "Show prompt"}
+                </button>
+              </div>
+              {showPreview && (
+                <div className={styles.promptPreview}>
+                  <h3>Active Prompt Preview</h3>
+                  <div className={styles.previewContent}>
+                    {activePrompt ? (
+                      <div>
+                        <div className={styles.previewStats}>
+                          <span>Characters: {activePrompt.length}</span>
+                          <span>Parts: {activePrompt.split("\n\n").length}</span>
+                        </div>
+                        <pre className={styles.previewText}>{activePrompt}</pre>
+                      </div>
+                    ) : (
+                      <p className={styles.previewPlaceholder}>
+                        Prompt content not available.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <span className={styles.noActive}>⚪ No active composition</span>
           )}
