@@ -51,6 +51,36 @@ export default function Fragments() {
     setLoading(false);
   };
 
+  const deleteFragment = async (fragmentId) => {
+    if (!confirm("Are you sure you want to delete this fragment?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:8000/api/prompt-fragments/${fragmentId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        await loadFragments();
+        alert("Fragment deleted successfully");
+      } else {
+        // Try to parse backend error message
+        let message = "Failed to delete fragment";
+        try {
+          const err = await response.json();
+          message = err.detail || message;
+        } catch (_) {}
+        throw new Error(message);
+      }
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -107,16 +137,32 @@ export default function Fragments() {
           <div className={styles.fragmentGrid}>
             {fragments.map((fragment) => (
               <div key={fragment.id} className={styles.fragmentCard}>
-                <h3>{fragment.name}</h3>
+                <div className={styles.fragmentHeader}>
+                  <h3>{fragment.name}</h3>
+                  {fragment.is_system && (
+                    <span className={styles.systemBadge}>System</span>
+                  )}
+                </div>
                 <div className={styles.fragmentContent}>
                   <pre>{fragment.content}</pre>
                 </div>
                 <div className={styles.fragmentMeta}>
                   <span className={styles.fragmentId}>ID: {fragment.id}</span>
                   <span className={styles.fragmentLength}>
-                    {fragment.content.length} chars
+                    {fragment.content?.length || 0} chars
                   </span>
                 </div>
+                {!fragment.is_system && (
+                  <div className={styles.fragmentActions}>
+                    <button
+                      onClick={() => deleteFragment(fragment.id)}
+                      className={styles.deleteButton}
+                      disabled={loading}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
