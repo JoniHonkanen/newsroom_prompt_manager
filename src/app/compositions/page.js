@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { buildApiUrl } from "@/lib/api";
 
 export default function Compositions() {
   const [compositions, setCompositions] = useState([]);
@@ -24,7 +25,7 @@ export default function Compositions() {
 
   const loadCompositions = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/prompt-compositions");
+  const response = await fetch(buildApiUrl("/api/prompt-compositions"));
       const data = await response.json();
       setCompositions(data);
     } catch (error) {
@@ -34,7 +35,7 @@ export default function Compositions() {
 
   const loadPersonas = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/ethical-personas");
+  const response = await fetch(buildApiUrl("/api/ethical-personas"));
       const data = await response.json();
       setPersonas(data);
     } catch (error) {
@@ -44,7 +45,7 @@ export default function Compositions() {
 
   const loadFragments = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/prompt-fragments");
+  const response = await fetch(buildApiUrl("/api/prompt-fragments"));
       const data = await response.json();
       setFragments(data);
     } catch (error) {
@@ -60,7 +61,7 @@ export default function Compositions() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/api/prompt-compositions", {
+  const response = await fetch(buildApiUrl("/api/prompt-compositions"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,7 +88,7 @@ export default function Compositions() {
 
   const activateComposition = async (compositionId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/prompt-compositions/${compositionId}/activate`, {
+  const response = await fetch(buildApiUrl(`/api/prompt-compositions/${compositionId}/activate`), {
         method: "PUT",
       });
 
@@ -109,7 +110,7 @@ export default function Compositions() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/prompt-compositions/${compositionId}`, {
+  const response = await fetch(buildApiUrl(`/api/prompt-compositions/${compositionId}`), {
         method: "DELETE",
       });
 

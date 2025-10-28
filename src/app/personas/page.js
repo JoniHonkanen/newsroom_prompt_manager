@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { buildApiUrl } from "@/lib/api";
 
 export default function Personas() {
   const [personas, setPersonas] = useState([]);
@@ -15,7 +16,7 @@ export default function Personas() {
 
   const loadPersonas = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/ethical-personas");
+  const response = await fetch(buildApiUrl("/api/ethical-personas"));
       const data = await response.json();
       setPersonas(data);
     } catch (error) {
@@ -35,7 +36,7 @@ export default function Personas() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/api/ethical-personas", {
+  const response = await fetch(buildApiUrl("/api/ethical-personas"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPersona),
@@ -61,7 +62,7 @@ export default function Personas() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/ethical-personas/${personaId}`, {
+  const response = await fetch(buildApiUrl(`/api/ethical-personas/${personaId}`), {
         method: "DELETE",
       });
 

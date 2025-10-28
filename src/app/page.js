@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { buildApiUrl } from "@/lib/api";
 
 export default function Home() {
   const [compositions, setCompositions] = useState([]);
@@ -17,9 +18,7 @@ export default function Home() {
 
   const loadCompositions = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/prompt-compositions"
-      );
+      const response = await fetch(buildApiUrl("/api/prompt-compositions"));
       const data = await response.json();
       console.log("Loaded compositions:", data);
 
@@ -36,8 +35,8 @@ export default function Home() {
         // Build the full prompt from persona + fragments
         try {
           const [personasRes, fragmentsRes] = await Promise.all([
-            fetch("http://localhost:8000/api/ethical-personas"),
-            fetch("http://localhost:8000/api/prompt-fragments"),
+            fetch(buildApiUrl("/api/ethical-personas")),
+            fetch(buildApiUrl("/api/prompt-fragments")),
           ]);
           const [personas, fragments] = await Promise.all([
             personasRes.json(),
@@ -73,7 +72,7 @@ export default function Home() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/prompt-compositions${compositionName}`,
+        buildApiUrl(`/api/prompt-compositions/${compositionName}`),
         {
           method: "PUT",
         }

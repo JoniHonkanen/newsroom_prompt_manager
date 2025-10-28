@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { buildApiUrl } from "@/lib/api";
 
 export default function Fragments() {
   const [fragments, setFragments] = useState([]);
@@ -16,7 +17,7 @@ export default function Fragments() {
 
   const loadFragments = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/prompt-fragments");
+  const response = await fetch(buildApiUrl("/api/prompt-fragments"));
       const data = await response.json();
       setFragments(data);
     } catch (error) {
@@ -32,7 +33,7 @@ export default function Fragments() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/api/prompt-fragments", {
+  const response = await fetch(buildApiUrl("/api/prompt-fragments"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newFragment),
@@ -58,7 +59,7 @@ export default function Fragments() {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/prompt-fragments/${fragmentId}`, {
+  const response = await fetch(buildApiUrl(`/api/prompt-fragments/${fragmentId}`), {
         method: "DELETE",
       });
 

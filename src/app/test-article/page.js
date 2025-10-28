@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { buildApiUrl } from "@/lib/api";
 
 export default function TestArticle() {
   const [title, setTitle] = useState("");
@@ -23,7 +24,7 @@ export default function TestArticle() {
     setLoading(true);
     try {
       // Primary payload per spec
-      let res = await fetch("http://localhost:8000/api/test-article-simple", {
+  let res = await fetch(buildApiUrl("/api/test-article-simple"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: title.trim(), article: article.trim() }),
@@ -31,7 +32,7 @@ export default function TestArticle() {
 
       // Some backends may expect `content` instead of `article` – try fallback
       if (!res.ok) {
-        res = await fetch("http://localhost:8000/api/test-article-simple", {
+  res = await fetch(buildApiUrl("/api/test-article-simple"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ title: title.trim(), content: article.trim() }),
