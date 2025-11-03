@@ -10,6 +10,7 @@ export default function HeaderNav() {
   const links = [
     { href: "/", label: "🏠 Etusivu" },
     { href: "/test-article", label: "🧪 Test Article" },
+    { href: "/test-phonecall", label: "📞 Puhelinhaastattelu" },
   ];
 
   return (
