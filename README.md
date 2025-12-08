@@ -1,4 +1,14 @@
-# Newsroom Prompt Manager
+# Newsroom Prompt Manager - Admin Interface
+
+**Part of the Newsroom ecosystem:** This admin interface enables management of backend prompts, ethical personas, and testing. Used for testing editorial decisions and initiating phone interviews.
+
+**Related projects:**
+- [Backend (newsroom_ai_pipeline)](https://github.com/JoniHonkanen/newsroom) - Handles news generation, enrichment, and publishing
+- [Frontend (newsroom_production_frontend)](https://github.com/JoniHonkanen/newsroom_production_frontend) - Public news site
+
+**Technologies:** Next.js, React, FastAPI backend (required)
+
+---
 
 Kevyt Next.js -pohjainen hallintakäyttöliittymä Newsroom AI -backendille. Täällä hallitset Ethical Personas, Prompt Fragments, Prompt Compositions sekä testaat Editor in Chief -arviointia ja puhelinhaastatteluja.
 
